@@ -1,0 +1,12 @@
+// TERRAMATE: GENERATED AUTOMATICALLY DO NOT EDIT
+
+variable "env" {
+  type = string
+}
+variable "region" {
+  type = string
+}
+variable "app_version" {
+  default = "1"
+  type    = string
+}
