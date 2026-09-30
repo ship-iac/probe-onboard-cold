@@ -1,0 +1,27 @@
+name: probe-permission
+on: workflow_dispatch
+permissions: {}
+jobs:
+  engine-shape:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+      actions: read
+    steps:
+      - &probe
+        name: probe
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for u in k3np octocat 'shipmate-iac[bot]' definitely-no-such-user-zz9q; do
+            echo "== $u"
+            gh api -i "repos/$GITHUB_REPOSITORY/collaborators/$u/permission" 2>&1 | grep -E '^HTTP|^X-Accepted-Github-Permissions|"message"' | head -3 || true
+            gh api "repos/$GITHUB_REPOSITORY/collaborators/$u/permission" --jq '.permission' 2>&1 || echo "exit=$?"
+          done
+  no-permissions:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - *probe
